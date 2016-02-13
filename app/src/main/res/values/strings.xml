@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">SoundcloudTV</string>
+
+    <!-- Dialogs -->
+
+    <string name="text_error_oops_title">Oops</string>
+    <string name="error_message_network_needed_app">Oops, you need a network connection to use Vineyard!</string>
+    <string name="text_close">Close</string>
+
+    <array name="cat_names">
+        <item>Cat one</item>
+        <item>Cat two</item>
+        <item>Cat three</item>
+        <item>Cat four</item>
+        <item>Cat five</item>
+        <item>Cat six</item>
+        <item>Cat seven</item>
+        <item>Cat eight</item>
+    </array>
+
+    <array name="cat_descriptions">
+        <item>Description one</item>
+        <item>Description two</item>
+        <item>Description three</item>
+        <item>Description four</item>
+        <item>Description five</item>
+        <item>Description six</item>
+        <item>Description seven</item>
+        <item>Description eight</item>
+    </array>
+
+</resources>
