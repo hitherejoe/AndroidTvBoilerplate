@@ -25,7 +25,7 @@ The project is setup using:
 - [Mockito](http://mockito.org/)
 - [Glide](https://github.com/bumptech/glide)
 
-The boilerplate currently has two core screens implemented:
+The boilerplate currently has two core screens implemented and ready to feed data into:
 
 ##Browse
 
