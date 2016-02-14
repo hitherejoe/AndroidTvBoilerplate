@@ -7,7 +7,6 @@ import com.hitherejoe.androidtvboilerplate.data.DataManager;
 import com.hitherejoe.androidtvboilerplate.data.local.PreferencesHelper;
 import com.hitherejoe.androidtvboilerplate.data.remote.AndroidTvBoilerplateService;
 import com.hitherejoe.androidtvboilerplate.injection.ApplicationContext;
-import com.squareup.otto.Bus;
 
 import javax.inject.Singleton;
 
@@ -42,12 +41,6 @@ public class ApplicationTestModule {
     }
 
     @Provides
-    @Singleton
-    Bus provideEventBus() {
-        return new Bus();
-    }
-
-    @Provides
     CompositeSubscription provideCompositeSubscription() {
         return new CompositeSubscription();
     }
@@ -68,7 +61,7 @@ public class ApplicationTestModule {
 
     @Provides
     @Singleton
-    AndroidTvBoilerplateService provideVineyardService() {
+    AndroidTvBoilerplateService provideAndroidTvBoilerplateService() {
         return mock(AndroidTvBoilerplateService.class);
     }
 

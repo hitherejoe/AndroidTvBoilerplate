@@ -3,7 +3,6 @@ package com.hitherejoe.androidtvboilerplate;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.view.KeyEvent;
 
 import com.hitherejoe.androidtvboilerplate.data.model.Cat;
 import com.hitherejoe.androidtvboilerplate.test.common.TestDataFactory;
@@ -22,8 +21,6 @@ import rx.Single;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
-import static android.support.test.espresso.action.ViewActions.pressKey;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -53,22 +50,14 @@ public class SearchActivityTest {
         onView(withId(R.id.lb_search_text_editor))
                 .perform(replaceText("cat"));
 
-        pressImeActionButton();
-        pressKey(KeyEvent.KEYCODE_SEARCH);
-
         for (int i = 0; i < mockCats.size(); i++) {
-            checkItemAtPosition(mockCats.get(i), i);
+            checkItemAtPosition(mockCats.get(i));
         }
     }
 
-    private void checkItemAtPosition(Cat cat, int position) {
-        if (position > 0) {
-            onView(withItemText(cat.name, R.id.browse_container_dock)).perform(click());
-        }
-        onView(withItemText(cat.name, R.id.browse_container_dock))
-                .check(matches(isDisplayed()));
-        onView(withItemText(cat.description, R.id.browse_container_dock))
-                .check(matches(isDisplayed()));
+    private void checkItemAtPosition(Cat cat) {
+        onView(withItemText(cat.name, R.id.lb_results_frame)).perform(click());
+        onView(withItemText(cat.description, R.id.lb_results_frame)).check(matches(isDisplayed()));
     }
 
     private void stubDataManagerGetCats(Single<List<Cat>> single) {
