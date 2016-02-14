@@ -28,7 +28,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Leanback">
 
-        <activity android:name="com.hitherejoe.androidtvboilerplate.ui.activity.MainActivity">
+        <activity android:name=".ui.content.ContentActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activity.SearchActivity"/>
+        <activity android:name=".ui.search.SearchContentActivity"/>
 
         <receiver
             android:name=".data.recommendations.RecommendationReceiver"

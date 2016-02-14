@@ -2,9 +2,8 @@ package com.hitherejoe.androidtvboilerplate.injection.component;
 
 import com.hitherejoe.androidtvboilerplate.injection.PerActivity;
 import com.hitherejoe.androidtvboilerplate.injection.module.ActivityModule;
-import com.hitherejoe.androidtvboilerplate.ui.activity.MainActivity;
-import com.hitherejoe.androidtvboilerplate.ui.fragment.MainFragment;
-import com.hitherejoe.androidtvboilerplate.ui.fragment.SearchFragment;
+import com.hitherejoe.androidtvboilerplate.ui.content.ContentFragment;
+import com.hitherejoe.androidtvboilerplate.ui.search.SearchContentFragment;
 
 import dagger.Component;
 
@@ -15,8 +14,7 @@ import dagger.Component;
 @Component(dependencies = ApplicationComponent.class, modules = ActivityModule.class)
 public interface ActivityComponent {
 
-    void inject(MainActivity mainActivity);
-    void inject(MainFragment mainFragment);
-    void inject(SearchFragment searchFragment);
+    void inject(ContentFragment contentFragment);
+    void inject(SearchContentFragment searchContentFragment);
 
 }

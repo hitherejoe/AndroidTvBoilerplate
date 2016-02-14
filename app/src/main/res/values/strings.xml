@@ -15,6 +15,7 @@
 
     <!-- Error messages -->
     <string name="error_message_network_needed">Oops, you need a network connection to do that!</string>
+    <string name="error_message_generic">Oops, there was an error with the request!</string>
 
     <!-- Dummy data -->
 

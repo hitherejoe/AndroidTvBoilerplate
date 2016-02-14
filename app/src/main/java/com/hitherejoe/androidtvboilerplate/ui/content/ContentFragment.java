@@ -1,4 +1,4 @@
-package com.hitherejoe.androidtvboilerplate.ui.fragment;
+package com.hitherejoe.androidtvboilerplate.ui.content;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -21,16 +21,16 @@ import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.hitherejoe.androidtvboilerplate.R;
-import com.hitherejoe.androidtvboilerplate.data.DataManager;
 import com.hitherejoe.androidtvboilerplate.data.model.Cat;
-import com.hitherejoe.androidtvboilerplate.ui.activity.BaseActivity;
-import com.hitherejoe.androidtvboilerplate.ui.activity.SearchActivity;
-import com.hitherejoe.androidtvboilerplate.ui.presenter.CardPresenter;
+import com.hitherejoe.androidtvboilerplate.ui.base.BaseActivity;
+import com.hitherejoe.androidtvboilerplate.ui.search.SearchContentActivity;
+import com.hitherejoe.androidtvboilerplate.ui.common.CardPresenter;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -38,17 +38,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.SingleSubscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import timber.log.Timber;
+public class ContentFragment extends BrowseFragment implements ContentMvpView {
 
-public class MainFragment extends BrowseFragment {
+    @Inject ContentPresenter mContentPresenter;
 
     private static final int BACKGROUND_UPDATE_DELAY = 300;
-
-    @Inject DataManager mDataManager;
 
     private ArrayObjectAdapter mRowsAdapter;
     private BackgroundManager mBackgroundManager;
@@ -56,24 +50,24 @@ public class MainFragment extends BrowseFragment {
     private Drawable mDefaultBackground;
     private Handler mHandler;
     private Runnable mBackgroundRunnable;
-    private Subscription mSubscription;
 
-    public static MainFragment newInstance() {
-        return new MainFragment();
+    public static ContentFragment newInstance() {
+        return new ContentFragment();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((BaseActivity) getActivity()).getActivityComponent().inject(this);
+        ((BaseActivity) getActivity()).activityComponent().inject(this);
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
         mHandler = new Handler();
+        mContentPresenter.attachView(this);
 
-        loadPosts();
         setAdapter(mRowsAdapter);
         prepareBackgroundManager();
         setupUIElements();
         setupListeners();
+        getCats();
     }
 
     @Override
@@ -84,7 +78,7 @@ public class MainFragment extends BrowseFragment {
             mBackgroundRunnable = null;
         }
         mBackgroundManager = null;
-        if (mSubscription != null) mSubscription.unsubscribe();
+        mContentPresenter.detachView();
     }
 
     @Override
@@ -128,16 +122,22 @@ public class MainFragment extends BrowseFragment {
 
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), SearchActivity.class));
+                startActivity(new Intent(getActivity(), SearchContentActivity.class));
             }
         });
     }
 
-    private void loadPosts() {
-        final ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
-        HeaderItem header = new HeaderItem(0, getString(R.string.header_title_cats));
-        mRowsAdapter.add(new ListRow(header, listRowAdapter));
+    private void prepareBackgroundManager() {
+        mBackgroundManager = BackgroundManager.getInstance(getActivity());
+        mBackgroundManager.attach(getActivity().getWindow());
+        mDefaultBackground =
+                new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.primary_light));
+        mBackgroundManager.setColor(ContextCompat.getColor(getActivity(), R.color.primary_light));
+        mMetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
+    }
 
+    private void getCats() {
         // Usually we'd load things from an API or database, for example here we just create
         // a list of cats from resources and return them back after passing them to the datamanager.
         // Obviously we wouldn't usually do this, but this is just for example and allows us
@@ -152,31 +152,7 @@ public class MainFragment extends BrowseFragment {
             cats.add(new Cat(names[i], descriptions[i], images[i]));
         }
 
-        mSubscription = mDataManager.getCats(cats)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new SingleSubscriber<List<Cat>>() {
-                    @Override
-                    public void onSuccess(List<Cat> cats) {
-                        listRowAdapter.addAll(0, cats);
-                    }
-
-                    @Override
-                    public void onError(Throwable error) {
-                        Timber.e(error, "There was an error loading the cats!");
-                    }
-                });
-    }
-
-
-    private void prepareBackgroundManager() {
-        mBackgroundManager = BackgroundManager.getInstance(getActivity());
-        mBackgroundManager.attach(getActivity().getWindow());
-        mDefaultBackground =
-                new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.primary_light));
-        mBackgroundManager.setColor(ContextCompat.getColor(getActivity(), R.color.primary_light));
-        mMetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
+        mContentPresenter.getCats(cats);
     }
 
     private void startBackgroundTimer(final URI backgroundURI) {
@@ -211,5 +187,24 @@ public class MainFragment extends BrowseFragment {
                     }
                 }
             };
+
+    /**
+     * Method implementations from SearchContentMvpView
+     */
+
+    @Override
+    public void showCats(List<Cat> cats) {
+        final ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
+        listRowAdapter.addAll(0, cats);
+        HeaderItem header = new HeaderItem(0, getString(R.string.header_title_cats));
+        mRowsAdapter.add(new ListRow(header, listRowAdapter));
+    }
+
+    @Override
+    public void showCatsError() {
+        // show loading error state here
+        String errorMessage = getString(R.string.error_message_generic);
+        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.hitherejoe.androidtvboilerplate.ui.presenter;
+package com.hitherejoe.androidtvboilerplate.ui.common;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

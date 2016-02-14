@@ -1,4 +1,4 @@
-package com.hitherejoe.androidtvboilerplate.ui.fragment;
+package com.hitherejoe.androidtvboilerplate.ui.search;
 
 import android.Manifest;
 import android.app.Activity;
@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v17.leanback.app.BackgroundManager;
+import android.support.v17.leanback.app.SearchFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
@@ -27,15 +28,15 @@ import android.support.v17.leanback.widget.SpeechRecognitionCallback;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.hitherejoe.androidtvboilerplate.R;
-import com.hitherejoe.androidtvboilerplate.data.DataManager;
 import com.hitherejoe.androidtvboilerplate.data.model.Cat;
-import com.hitherejoe.androidtvboilerplate.ui.activity.BaseActivity;
-import com.hitherejoe.androidtvboilerplate.ui.presenter.CardPresenter;
+import com.hitherejoe.androidtvboilerplate.ui.base.BaseActivity;
+import com.hitherejoe.androidtvboilerplate.ui.common.CardPresenter;
 import com.hitherejoe.androidtvboilerplate.util.NetworkUtil;
 import com.hitherejoe.androidtvboilerplate.util.ToastFactory;
 
@@ -45,36 +46,33 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.SingleSubscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class SearchFragment extends android.support.v17.leanback.app.SearchFragment
-        implements android.support.v17.leanback.app.SearchFragment.SearchResultProvider {
+public class SearchContentFragment extends SearchFragment implements SearchContentMvpView,
+        SearchFragment.SearchResultProvider {
+
+    @Inject SearchContentPresenter mSearchContentPresenter;
 
     private static final int BACKGROUND_UPDATE_DELAY = 300;
     private static final int REQUEST_SPEECH = 0x00000010;
 
-    @Inject DataManager mDataManager;
-
     private ArrayObjectAdapter mResultsAdapter;
+    private ArrayObjectAdapter mSearchObjectAdapter;
     private BackgroundManager mBackgroundManager;
     private Drawable mDefaultBackground;
     private DisplayMetrics mMetrics;
     private Handler mHandler;
     private Runnable mBackgroundRunnable;
-    private Subscription mSearchResultsSubscription;
 
     private String mSearchQuery;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((BaseActivity) getActivity()).getActivityComponent().inject(this);
+        ((BaseActivity) getActivity()).activityComponent().inject(this);
         mResultsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
         mHandler = new Handler();
+        mSearchContentPresenter.attachView(this);
         setSearchResultProvider(this);
         setupBackgroundManager();
         setListeners();
@@ -86,7 +84,7 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
             mBackgroundRunnable = null;
         }
         mBackgroundManager = null;
-        if (mSearchResultsSubscription != null) mSearchResultsSubscription.unsubscribe();
+        mSearchContentPresenter.detachView();
         super.onDestroy();
     }
 
@@ -182,8 +180,8 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
                 public void recognizeSpeech() {
                     try {
                         startActivityForResult(getRecognizerIntent(), REQUEST_SPEECH);
-                    } catch (ActivityNotFoundException e) {
-                        Timber.e("Cannot find activity for speech recognizer", e);
+                    } catch (ActivityNotFoundException error) {
+                        Timber.e(error, "Cannot find activity for speech recognizer");
                     }
                 }
             });
@@ -197,7 +195,7 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
     }
 
     private void loadQuery(String query) {
-        if ((mSearchQuery != null && !mSearchQuery.equals(query)) && query.trim().length() > 0
+        if ((mSearchQuery != null && !mSearchQuery.equals(query)) && !query.trim().isEmpty()
                 || (!TextUtils.isEmpty(query) && !query.equals("nil"))) {
             if (NetworkUtil.isNetworkConnected(getActivity())) {
                 mSearchQuery = query;
@@ -211,15 +209,14 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
     private void searchCats(String query) {
         mResultsAdapter.clear();
         HeaderItem resultsHeader = new HeaderItem(0, getString(R.string.text_search_results));
-        ArrayObjectAdapter arrayObjectAdapter = new ArrayObjectAdapter(new CardPresenter());
-        ListRow listRow = new ListRow(resultsHeader, arrayObjectAdapter);
+        mSearchObjectAdapter = new ArrayObjectAdapter(new CardPresenter());
+        ListRow listRow = new ListRow(resultsHeader, mSearchObjectAdapter);
         mResultsAdapter.add(listRow);
-        performSearch(arrayObjectAdapter);
+        mSearchObjectAdapter.clear();
+        searchCats();
     }
 
-    private void performSearch(final ArrayObjectAdapter arrayObjectAdapter) {
-        arrayObjectAdapter.clear();
-
+    private void searchCats() {
         // Usually we'd load things from an API or database, for example here we just create
         // a list of cats from resources and return them back after passing them to the datamanager.
         // Obviously we wouldn't usually do this, but this is just for example and allows us
@@ -234,20 +231,7 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
             cats.add(new Cat(names[i], descriptions[i], images[i]));
         }
 
-        mSearchResultsSubscription = mDataManager.getCats(cats)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new SingleSubscriber<List<Cat>>() {
-                    @Override
-                    public void onSuccess(List<Cat> cats) {
-                        arrayObjectAdapter.addAll(0, cats);
-                    }
-
-                    @Override
-                    public void onError(Throwable error) {
-                        Timber.e(error, "There was an error loading the cats!");
-                    }
-                });
+        mSearchContentPresenter.searchCats(cats);
     }
 
     private OnItemViewClickedListener mOnItemViewClickedListener = new OnItemViewClickedListener() {
@@ -258,15 +242,27 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
         }
     };
 
-    private OnItemViewSelectedListener mOnItemViewSelectedListener = new OnItemViewSelectedListener() {
-        @Override
-        public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item,
-                                   RowPresenter.ViewHolder rowViewHolder, Row row) {
-            if (item instanceof Cat) {
-                String backgroundUrl = ((Cat) item).imageUrl;
-                if (backgroundUrl != null) startBackgroundTimer(URI.create(backgroundUrl));
-            }
-        }
-    };
+    private OnItemViewSelectedListener mOnItemViewSelectedListener =
+            new OnItemViewSelectedListener() {
+                @Override
+                public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item,
+                                           RowPresenter.ViewHolder rowViewHolder, Row row) {
+                    if (item instanceof Cat) {
+                        String backgroundUrl = ((Cat) item).imageUrl;
+                        if (backgroundUrl != null) startBackgroundTimer(URI.create(backgroundUrl));
+                    }
+                }
+            };
 
+    @Override
+    public void showCats(List<Cat> cats) {
+        mSearchObjectAdapter.addAll(0, cats);
+    }
+
+    @Override
+    public void showCatsError() {
+        // show loading error state here
+        String errorMessage = getString(R.string.error_message_generic);
+        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+    }
 }

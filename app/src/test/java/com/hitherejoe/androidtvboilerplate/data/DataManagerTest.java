@@ -1,6 +1,5 @@
-package com.hitherejoe.androidtvboilerplate;
+package com.hitherejoe.androidtvboilerplate.data;
 
-import com.hitherejoe.androidtvboilerplate.data.DataManager;
 import com.hitherejoe.androidtvboilerplate.data.local.PreferencesHelper;
 import com.hitherejoe.androidtvboilerplate.data.model.Cat;
 import com.hitherejoe.androidtvboilerplate.data.remote.AndroidTvBoilerplateService;
