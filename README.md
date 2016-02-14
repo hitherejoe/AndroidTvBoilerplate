@@ -7,7 +7,7 @@
 </p>
 
 This is an Android TV Boilerplate project which should make it easy for you to get started when
-wanting to create your won application for the Android TV platform!
+wanting to create your own application for the Android TV platform!
 
 The project is setup using:
 
