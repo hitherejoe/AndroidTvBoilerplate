@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.hitherejoe.androidtvboilerplate.data.remote.AndroidTvBoilerplateService;
 import com.hitherejoe.androidtvboilerplate.injection.ApplicationContext;
-import com.squareup.otto.Bus;
 
 import javax.inject.Singleton;
 
@@ -40,12 +39,6 @@ public class ApplicationModule {
     @Provides
     CompositeSubscription provideCompositeSubscription() {
         return new CompositeSubscription();
-    }
-
-    @Provides
-    @Singleton
-    Bus provideEventBus() {
-        return new Bus();
     }
 
     @Provides

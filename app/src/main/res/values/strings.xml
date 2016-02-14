@@ -4,11 +4,17 @@
     <!-- Browse fragment -->
     <string name="header_title_cats">Cats</string>
 
+    <!-- Search fragment -->
+    <string name="text_search_results">Search results</string>
+
     <!-- Dialogs -->
 
     <string name="text_error_oops_title">Oops</string>
     <string name="error_message_network_needed_app">Oops, you need a network connection to use Vineyard!</string>
     <string name="text_close">Close</string>
+
+    <!-- Error messages -->
+    <string name="error_message_network_needed">Oops, you need a network connection to do that!</string>
 
     <!-- Dummy data -->
 

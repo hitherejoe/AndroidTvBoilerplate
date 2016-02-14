@@ -1,14 +1,14 @@
 package com.hitherejoe.androidtvboilerplate;
 
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.view.KeyEvent;
 
 import com.hitherejoe.androidtvboilerplate.data.model.Cat;
 import com.hitherejoe.androidtvboilerplate.test.common.TestDataFactory;
 import com.hitherejoe.androidtvboilerplate.test.common.rules.TestComponentRule;
-import com.hitherejoe.androidtvboilerplate.ui.activity.MainActivity;
+import com.hitherejoe.androidtvboilerplate.ui.activity.SearchActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,6 +22,9 @@ import rx.Single;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
+import static android.support.test.espresso.action.ViewActions.pressKey;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -30,27 +33,31 @@ import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
-public class MainActivityTest {
+public class SearchActivityTest {
 
     public final TestComponentRule component =
             new TestComponentRule(InstrumentationRegistry.getTargetContext());
-    public final ActivityTestRule<MainActivity> main =
-            new ActivityTestRule<>(MainActivity.class, false, false);
+    public final ActivityTestRule<SearchActivity> main =
+            new ActivityTestRule<>(SearchActivity.class, false, false);
 
     @Rule
     public final TestRule chain = RuleChain.outerRule(component).around(main);
 
     @Test
-    public void postsDisplayAndAreBrowseable() {
-        List<Cat> mockcats = TestDataFactory.makeCats(5);
-        stubDataManagerGetCats(Single.just(mockcats));
+    public void searchResultsDisplayAndAreScrollable() {
         main.launchActivity(null);
 
-        onView(withId(R.id.browse_headers))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        List<Cat> mockCats = TestDataFactory.makeCats(5);
+        stubDataManagerGetCats(Single.just(mockCats));
 
-        for (int i = 0; i < mockcats.size(); i++) {
-            checkItemAtPosition(mockcats.get(i), i);
+        onView(withId(R.id.lb_search_text_editor))
+                .perform(replaceText("cat"));
+
+        pressImeActionButton();
+        pressKey(KeyEvent.KEYCODE_SEARCH);
+
+        for (int i = 0; i < mockCats.size(); i++) {
+            checkItemAtPosition(mockCats.get(i), i);
         }
     }
 

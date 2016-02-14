@@ -1,5 +1,6 @@
 package com.hitherejoe.androidtvboilerplate.ui.fragment;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
@@ -28,6 +29,7 @@ import com.hitherejoe.androidtvboilerplate.R;
 import com.hitherejoe.androidtvboilerplate.data.DataManager;
 import com.hitherejoe.androidtvboilerplate.data.model.Cat;
 import com.hitherejoe.androidtvboilerplate.ui.activity.BaseActivity;
+import com.hitherejoe.androidtvboilerplate.ui.activity.SearchActivity;
 import com.hitherejoe.androidtvboilerplate.ui.presenter.CardPresenter;
 
 import java.net.URI;
@@ -126,7 +128,7 @@ public class MainFragment extends BrowseFragment {
 
             @Override
             public void onClick(View view) {
-                // start search activity
+                startActivity(new Intent(getActivity(), SearchActivity.class));
             }
         });
     }

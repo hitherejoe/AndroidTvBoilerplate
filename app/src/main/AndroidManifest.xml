@@ -37,6 +37,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.activity.SearchActivity"/>
+
         <receiver
             android:name=".data.recommendations.RecommendationReceiver"
             android:enabled="true"

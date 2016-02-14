@@ -36,7 +36,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onSearchRequested() {
-        // Start search activity
+        startActivity(SearchActivity.getStartIntent(this));
         return true;
     }
 
