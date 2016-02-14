@@ -1,11 +1,16 @@
 <resources>
-    <string name="app_name">SoundcloudTV</string>
+    <string name="app_name">Boilerplate</string>
+    
+    <!-- Browse fragment -->
+    <string name="header_title_cats">Cats</string>
 
     <!-- Dialogs -->
 
     <string name="text_error_oops_title">Oops</string>
     <string name="error_message_network_needed_app">Oops, you need a network connection to use Vineyard!</string>
     <string name="text_close">Close</string>
+
+    <!-- Dummy data -->
 
     <array name="cat_names">
         <item>Cat one</item>
@@ -27,6 +32,17 @@
         <item>Description six</item>
         <item>Description seven</item>
         <item>Description eight</item>
+    </array>
+
+    <array name="cat_images">
+        <item>https://i.ytimg.com/vi/tntOCGkgt98/maxresdefault.jpg</item>
+        <item>https://i.ytimg.com/vi/icqDxNab3Do/maxresdefault.jpg</item>
+        <item>http://cdn.hasinstinct.com/2015/08/14/football-wallpapers-funny-cats-smile-wallpaper-31607.jpg</item>
+        <item>http://s2.dmcdn.net/Dnepf/1280x720-ET4.jpg</item>
+        <item>http://cdn.hasinstinct.com/2015/09/22/funny-cute-cat-7035315.jpg</item>
+        <item>http://www.funny-animalpictures.com/media/content/items/images/funnycats0048_O.jpg</item>
+        <item>https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSYz-mKES0-qiefh_xQV1dApGVM2t0UzlSFPB4C8Xm2msyH8tHe</item>
+        <item>http://www.becauseimacat.com/wp-content/uploads/2015/09/Funny-Cat-Vine-Compilation.jpg</item>
     </array>
 
 </resources>
