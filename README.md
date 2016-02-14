@@ -11,6 +11,7 @@ wanting to create your won application for the Android TV platform!
 
 The project is setup using:
 
+- MVP architecture
 - Functional tests with [Espresso](http://google.github.io/android-testing-support-library/docs/espresso)
 - Unit tests with [Mockito](http://mockito.org/)
 - [Checkstyle](http://checkstyle.sourceforge.net/), [FindBugs](http://findbugs.sourceforge.net/) and [PMD](https://pmd.github.io/)
