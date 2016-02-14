@@ -38,6 +38,12 @@ The boilerplate currently has two core screens implemented and ready to feed dat
     <img src="images/search_fragment.png" alt="Loading Card"/>
 </p>
 
+#Check
+
+To check the code style and run unit tests:
+
+```./gradlew check```
+
 #Building
 
 To build, install and run a debug version, run this from the root of the project:
