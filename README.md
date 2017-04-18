@@ -1,4 +1,4 @@
-#Android TV Boilerplate
+# Android TV Boilerplate
 [![Build Status](https://travis-ci.org/hitherejoe/Vineyard.svg?branch=master)](https://travis-ci.org/hitherejoe/AndroidTvBoilerplate)
 =======================
 
@@ -27,18 +27,18 @@ The project is setup using:
 
 The boilerplate currently has two core screens implemented and ready to feed data into:
 
-##Browse
+## Browse
 
 <p align="center">
     <img src="images/browse_fragment.png" alt="Loading Card"/>
 </p>
 
-##Search
+## Search
 <p align="center">
     <img src="images/search_fragment.png" alt="Loading Card"/>
 </p>
 
-#Check
+# Check
 
 To check the code style and run unit tests:
 
@@ -50,7 +50,7 @@ To build, install and run a debug version, run this from the root of the project
 
 ```./gradlew assembleDebug```
 
-#Unit Tests
+# Unit Tests
 
 To run the unit tests for the application:
 
